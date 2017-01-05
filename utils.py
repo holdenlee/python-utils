@@ -2,6 +2,8 @@ from random import *
 import math
 import itertools
 import pickle
+import numpy as np
+import re
 
 """
 List functions
@@ -11,8 +13,15 @@ def uniques(li):
 
 #:[[a]] -> [a]
 #http://stackoverflow.com/questions/716477/join-list-of-lists-in-python
-def concat(lli):
-    return list(itertools.chain.from_iterable(lli))
+def concat(lli, s='l'):
+    if s=='s' or (len(lli)>0 and type(lli[0]) is str):
+        return("".join(lli))
+    else:
+        return list(itertools.chain.from_iterable(lli))
+#http://stackoverflow.com/questions/952914/making-a-flat-list-out-of-list-of-lists-in-python
+
+def lines(s):
+    return s.split('\n')
 
 def unzip(li):
     return ([x for (x,y) in li], [y for (x,y) in li])
@@ -78,6 +87,14 @@ def quartiles(li):
 
 def e_(i,n):
     return [1 if j==i else 0 for j in range(n)]
+
+"""
+Strings
+"""
+
+def remove_chars(cs, s):
+    rx = '[' + re.escape(cs) + ']'
+    return re.sub(rx, '', s)
 
 #np.asarray(
 
