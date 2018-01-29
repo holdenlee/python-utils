@@ -20,8 +20,8 @@ def concat(lli, s='l'):
         return list(itertools.chain.from_iterable(lli))
 #http://stackoverflow.com/questions/952914/making-a-flat-list-out-of-list-of-lists-in-python
 
-def lines(s):
-    return s.split('\n')
+def list_union(a,b):
+    return list(set(a) | set(b))
 
 def unzip(li):
     return ([x for (x,y) in li], [y for (x,y) in li])
@@ -29,11 +29,24 @@ def unzip(li):
 def mapkw(f, li):
     return [f(*l) for l in li]
 
-def deepmap(f,li):
+def deepmap(f,li,tup=True):
     if isinstance(li, list):
         return [deepmap(f, x) for x in li]
+    elif tup and isinstance(li,tuple):
+        return tuple([deepmap(f, x,True) for x in li])
     else:
         return f(li)
+
+def emap(f,li):
+    return map(lambda x: f(*x), enumerate(li))
+
+#alternate([1,2,3],[4,5,6,7])= [1,4,2,5,3,6]
+def alternate(l1, l2):
+    ans=[]
+    while len(l1)>0:
+        ans+=[l1[0]]
+        (l1,l2)=(l2,l1[1:])
+    return ans
 
 #:[a] -> ([a],[a])
 def split_eo(li):
@@ -77,6 +90,16 @@ def get_frac(li, i):
     else:
         return (1-(i-j)) * li[j] + (i-j) * li[j+1]
 
+# zipped list (id, prob)
+def sample_wp(li):
+    r=random()
+    s=0
+    for (i,p) in li:
+        s += i
+        if r<=s:
+            return i
+    return None
+
 def percentiles(li, ps):
     lis = sorted(li)
     l = len(li)
@@ -96,6 +119,17 @@ def remove_chars(cs, s):
     rx = '[' + re.escape(cs) + ']'
     return re.sub(rx, '', s)
 
+def lines(s):
+    return s.split('\n')
+
+def unlines(li):
+    return '\n'.join(li)
+
+def words(s):
+    return s.split(' ')
+
+def unwords(li):
+    return ' '.join(li)
 #np.asarray(
 
 """
@@ -137,8 +171,11 @@ def nested_for_(li, f):
 
 def list_prod(llis):
     if llis==[]:
-        return []
-    return [[llis[0]].append(li) for li in list_prod(llis[1:])]
+        return [[]]
+    return [[x]+li for x in llis[0] for li in list_prod(llis[1:])]
+    #return [[llis[0]].append(li) for li in list_prod(llis[1:])]
+
+#print(list_prod([[0,1],[0,1]]))
 
 # like nested_for, but flattened.
 def fors(llis, f):
@@ -165,6 +202,20 @@ def map_keys(f, d):
 
 def map_vals(f, d):
     return {k : f(v) for (k,v) in d.items()}
+
+def dict_add_with_default(default, binop, d,k,v):
+    if not(k in d):
+        d[k] = default
+    d[k] = binop(d[k],v)
+    
+def dict_add(d,k,v):
+    if k in d:
+        d[k] += v
+    else:
+        d[k]=v
+
+def dict_ladd(d,k,v):
+    return dict_add_with_default([],lambda x,y: x+[y],d,k,v)
 
 """
 Print functions
